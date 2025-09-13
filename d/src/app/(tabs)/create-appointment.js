@@ -9,15 +9,15 @@ export default function CreateAppointment() {
   const { addAppointment } = useAppointmentStore()
   const router = useRouter()
 
-  const [date, setDate] = useState('')
-  const [status, setStatus] = useState('')
-  const [message, setMessage] = useState('')
+  const [txtDate, setTxtDate] = useState('')
+  const [txtStatus, setTxtStatus] = useState('')
+  const [txtMessage, setTxtMessage] = useState('')
 
   const handleCreateAppointment = async () => {
     const appointment = {
       date: new Date(date).toISOString(), // garante que o formato esteja correto
-      status,
-      message
+      status: txtStatus,
+      message: txtMessage
     }
 
     const response = await fetchAuth('http://localhost:5000/appointment', {
@@ -41,8 +41,8 @@ export default function CreateAppointment() {
       <Text>Data e Hora:</Text>
       <TextInput
         style={styles.input}
-        onChangeText={setDate}
-        value={date}
+        onChangeText={setTxtDate}
+        value={txtDate}
         placeholder='YYYY-MM-DDTHH:MM'
         placeholderTextColor='#DDDDDD'
       />
@@ -50,17 +50,17 @@ export default function CreateAppointment() {
       <Text>Status:</Text>
       <TextInput
         style={styles.input}
-        onChangeText={setStatus}
-        value={status}
+        onChangeText={setTxtStatus}
+        value={txtStatus}
         placeholder='Ex: confirmado'
         placeholderTextColor='#DDDDDD'
       />
 
-      <Text>Mensagem (opcional):</Text>
+      <Text>Mensagem:</Text>
       <TextInput
         style={styles.input}
-        onChangeText={setMessage}
-        value={message}
+        onChangeText={setTxtMessage}
+        value={txtMessage}
         placeholder='Digite uma mensagem...'
         placeholderTextColor='#DDDDDD'
       />

@@ -1,79 +1,76 @@
-import {View, StyleSheet, Text, TextInput} from 'react-native'
-import { useState } from "react"
+import { View, StyleSheet, Text, TextInput } from 'react-native'
+import { useState } from 'react'
 import Button from '../components/Button'
 import { useRouter, useLocalSearchParams } from 'expo-router'
-import { useAccountStore } from '../stores/useAppointmentStore'
+import { useAppointmentStore } from '../stores/useAppointmentStore'
 import { fetchAuth } from '../utils/fetchAuth'
 
-export default function Update(){
+export default function Update() {
+  const { appointments, updateAppointment } = useAppointmentStore()
+  const router = useRouter()
+  const { id } = useLocalSearchParams()
 
-    const { accounts, updateAccount } = useAccountStore()
-    const router = useRouter()
-    const { id } = useLocalSearchParams()
+  const appointment = appointments.find((item) => item.id === id)
 
-    const account = accounts.find((item) => item.id === +id)
+  const [Date, txtSetDate] = useState(appointment?.date || '')
+  const [txtStatus, txtSetStatus] = useState(appointment?.status || '')
+  const [txtMessage, txtSetMessage] = useState(appointment?.message || '')
 
-    const [txtServico, setTxtServico] = useState(account?.service || '')
-    const [txtUsername, setTxtUsername] = useState(account?.username || '')
-    const [txtPass, setTxtPass] = useState(account?.pass || '')
-    const [txtImgUrl, setTxtImgUrl] = useState(account?.logo_image || '')
-
-    const handleCreateAccount = async () => {
-        const account = {
-            service: txtServico,
-            username: txtUsername,
-            logo_image: txtImgUrl,
-            pass: txtPass
-        }
-    
-        const response = await fetchAuth(`http://localhost:5000/account/${id}`, {
-          method: 'PUT',
-          body: JSON.stringify(account)
-        })
-
-        if(response.ok){
-            const data = await response.json()
-            updateAccount(data.account)
-            router.back()
-            return
-        }
-
-        console.log('Erro ao carregar accounts')
-        return
+  const handleUpdateAppointment = async () => {
+    const updatedAppointment = {
+      date: new Date().toISOString(),
+      status: txtStatus,
+      message: txtMessage
     }
 
-    return( 
-        <View style={styles.container}>
-          <Text>Serviço:</Text>
-          <TextInput 
-            style={styles.input}
-            onChangeText={setTxtServico}
-            value={txtServico}
-            placeholder='Digite o nome do serviço...'
-            placeholderTextColor='#DDDDDD'
-          />
-          <Text>Username:</Text>
-          <TextInput 
-            style={styles.input}
-            onChangeText={setTxtUsername}
-            value={txtUsername}
-          />
-          <Text>Password:</Text>
-          <TextInput 
-            style={styles.input}
-            onChangeText={setTxtPass}
-            value={txtPass}
-          />
-          <Text>Logo URL:</Text>
-          <TextInput 
-            style={styles.input}
-            onChangeText={setTxtImgUrl}
-            value={txtImgUrl}
-            keyboardType='url'
-          />
-        <Button onPress={handleCreateAccount}>Atualizar</Button>
-        </View>
-    )
+    const response = await fetchAuth(`http://localhost:5000/appointment/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(updatedAppointment)
+    })
+
+    if (response.ok) {
+      const data = await response.json()
+      updateAppointment(data.appointment)
+      router.back()
+      return
+    }
+
+    console.log('Erro ao atualizar appointment')
+    return
+  }
+
+  return (
+    <View style={styles.container}>
+      <Text>Data e Hora:</Text>
+      <TextInput
+        style={styles.input}
+        onChangeText={txtSetDate}
+        value={date}
+        placeholder="YYYY-MM-DDTHH:MM"
+        placeholderTextColor="#DDDDDD"
+      />
+
+      <Text>Status:</Text>
+      <TextInput
+        style={styles.input}
+        onChangeText={txtSetStatus}
+        value={txtStatus}
+        placeholder="Ex: confirmado"
+        placeholderTextColor="#DDDDDD"
+      />
+
+      <Text>Mensagem (opcional):</Text>
+      <TextInput
+        style={styles.input}
+        onChangeText={txtSetMessage}
+        value={txtMessage}
+        placeholder="Mensagem"
+        placeholderTextColor="#DDDDDD"
+      />
+
+      <Button onPress={handleUpdateAppointment}>Atualizar</Button>
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -87,6 +84,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
     marginVertical: 5,
-    borderRadius: 5
+    borderRadius: 5,
+    color: '#000'
   }
 })
