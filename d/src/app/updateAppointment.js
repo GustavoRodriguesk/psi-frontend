@@ -5,7 +5,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router'
 import { useAppointmentStore } from '../stores/useAppointmentStore'
 import { fetchAuth } from '../utils/fetchAuth'
 
-export default function Update() {
+export default function UpdateAppointment() {
   const { appointments, updateAppointment } = useAppointmentStore()
   const router = useRouter()
   const { id } = useLocalSearchParams()
