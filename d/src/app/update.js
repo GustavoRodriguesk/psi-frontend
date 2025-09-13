@@ -2,7 +2,7 @@ import {View, StyleSheet, Text, TextInput} from 'react-native'
 import { useState } from "react"
 import Button from '../components/Button'
 import { useRouter, useLocalSearchParams } from 'expo-router'
-import { useAccountStore } from '../stores/useAccountStore'
+import { useAccountStore } from '../stores/useAppointmentStore'
 import { fetchAuth } from '../utils/fetchAuth'
 
 export default function Update(){
@@ -26,7 +26,7 @@ export default function Update(){
             pass: txtPass
         }
     
-        const response = await fetchAuth(`http://localhost:3000/account/${id}`, {
+        const response = await fetchAuth(`http://localhost:5000/account/${id}`, {
           method: 'PUT',
           body: JSON.stringify(account)
         })
