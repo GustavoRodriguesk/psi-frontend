@@ -16,7 +16,7 @@ export default function RootLayout() {
       <Stack.Screen name="(tabs)" options={{headerShown: false}} />
       <Stack.Screen name="login" options={{title: "Entrar"}}/>
       <Stack.Screen name="signup" options={{title: "Cadastre-se"}}/>
-      <Stack.Screen name="create-account" options={{title: "Adicionar Conta"}}/>
+      <Stack.Screen name="create-appointment" options={{title: "Adicionar Agendamento"}}/>
       <Stack.Screen name="show-pass" options={{title: "Ver Senha"}}/>
       <Stack.Screen name="update" options={{title: "Editar"}}/>
     </Stack>
