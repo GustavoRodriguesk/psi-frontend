@@ -12,9 +12,23 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="create-account"
+        name="create-appointment"
         options={{
-          title: 'Cadastrar',
+          title: 'Cadastrar agendamento',
+          tabBarIcon: ({ color }) => <FontAwesome size={28} name="plus" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="create-mood"
+        options={{
+          title: 'Cadastrar Mood',
+          tabBarIcon: ({ color }) => <FontAwesome size={28} name="plus" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="create-subscription"
+        options={{
+          title: 'Cadastrar inscrição',
           tabBarIcon: ({ color }) => <FontAwesome size={28} name="plus" color={color} />,
         }}
       />
