@@ -2,73 +2,64 @@ import { View, StyleSheet, Text, TextInput } from 'react-native'
 import { useState } from 'react'
 import Button from '../components/Button'
 import { useRouter, useLocalSearchParams } from 'expo-router'
-import { useAppointmentStore } from '../stores/useAppointmentStore'
+import { useMoodStore } from '../stores/useMoodStore'
 import { fetchAuth } from '../utils/fetchAuth'
 
-export default function UpdateAppointment() {
-  const { appointments, updateAppointment } = useAppointmentStore()
+export default function UpdateMood() {
+  const { moods, updateMood } = useMoodStore()
   const router = useRouter()
   const { id } = useLocalSearchParams()
 
-  const appointment = appointments.find((item) => item.id === id)
+  const mood = moods.find((item) => item.id === id)
 
-  const [Date, txtSetDate] = useState(appointment?.date || '')
-  const [txtStatus, txtSetStatus] = useState(appointment?.status || '')
-  const [txtMessage, txtSetMessage] = useState(appointment?.message || '')
+  const [txtTexto, setTxtTexto] = useState(mood?.texto || '')
+  const [txtSentimento, setTxtSentimento] = useState(
+    mood?.sentimento?.toString() || ''
+  )
 
-  const handleUpdateAppointment = async () => {
-    const updatedAppointment = {
-      date: new Date().toISOString(),
-      status: txtStatus,
-      message: txtMessage
+  const handleUpdateMood = async () => {
+    const updatedMood = {
+      texto: txtTexto,
+      sentimento: parseInt(txtSentimento, 10)
     }
 
-    const response = await fetchAuth(`http://localhost:5000/appointment/${id}`, {
+    const response = await fetchAuth(`http://localhost:5000/mood/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(updatedAppointment)
+      body: JSON.stringify(updatedMood)
     })
 
     if (response.ok) {
       const data = await response.json()
-      updateAppointment(data.appointment)
+      updateMood(data.mood)
       router.back()
       return
     }
 
-    console.log('Erro ao atualizar appointment')
-    return
+    console.log('Erro ao atualizar mood')
   }
 
   return (
     <View style={styles.container}>
-      <Text>Data e Hora:</Text>
+      <Text>Texto:</Text>
       <TextInput
         style={styles.input}
-        onChangeText={txtSetDate}
-        value={date}
-        placeholder="YYYY-MM-DDTHH:MM"
+        onChangeText={setTxtTexto}
+        value={txtTexto}
+        placeholder="Como você está se sentindo?"
         placeholderTextColor="#DDDDDD"
       />
 
-      <Text>Status:</Text>
+      <Text>Sentimento (número):</Text>
       <TextInput
         style={styles.input}
-        onChangeText={txtSetStatus}
-        value={txtStatus}
-        placeholder="Ex: confirmado"
+        onChangeText={setTxtSentimento}
+        value={txtSentimento}
+        placeholder="Ex: 1 (triste) até 5 (feliz)"
+        keyboardType="numeric"
         placeholderTextColor="#DDDDDD"
       />
 
-      <Text>Mensagem (opcional):</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={txtSetMessage}
-        value={txtMessage}
-        placeholder="Mensagem"
-        placeholderTextColor="#DDDDDD"
-      />
-
-      <Button onPress={handleUpdateAppointment}>Atualizar</Button>
+      <Button onPress={handleUpdateMood}>Atualizar</Button>
     </View>
   )
 }

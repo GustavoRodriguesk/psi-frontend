@@ -2,73 +2,83 @@ import { View, StyleSheet, Text, TextInput } from 'react-native'
 import { useState } from 'react'
 import Button from '../components/Button'
 import { useRouter, useLocalSearchParams } from 'expo-router'
-import { useAppointmentStore } from '../stores/useAppointmentStore'
+import { useSubscriptionStore } from '../stores/useSubscriptionStore'
 import { fetchAuth } from '../utils/fetchAuth'
 
-export default function UpdateAppointment() {
-  const { appointments, updateAppointment } = useAppointmentStore()
+export default function UpdateSubscription() {
+  const { subscriptions, updateSubscription } = useSubscriptionStore()
   const router = useRouter()
   const { id } = useLocalSearchParams()
 
-  const appointment = appointments.find((item) => item.id === id)
+  const subscription = subscriptions.find((item) => item.id === id)
 
-  const [Date, txtSetDate] = useState(appointment?.date || '')
-  const [txtStatus, txtSetStatus] = useState(appointment?.status || '')
-  const [txtMessage, txtSetMessage] = useState(appointment?.message || '')
+  const [txtStatus, setTxtStatus] = useState(subscription?.status || '')
+  const [txtStartDate, setTxtStartDate] = useState(subscription?.startDate || '')
+  const [txtEndDate, setTxtEndDate] = useState(subscription?.endDate || '')
+  const [txtStripeId, setTxtStripeId] = useState(subscription?.stripeId || '')
 
-  const handleUpdateAppointment = async () => {
-    const updatedAppointment = {
-      date: new Date().toISOString(),
+  const handleUpdateSubscription = async () => {
+    const updatedSubscription = {
       status: txtStatus,
-      message: txtMessage
+      startDate: new Date(txtStartDate).toISOString(),
+      endDate: new Date(txtEndDate).toISOString(),
+      stripeId: txtStripeId
     }
 
-    const response = await fetchAuth(`http://localhost:5000/appointment/${id}`, {
+    const response = await fetchAuth(`http://localhost:5000/subscription/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(updatedAppointment)
+      body: JSON.stringify(updatedSubscription)
     })
 
     if (response.ok) {
       const data = await response.json()
-      updateAppointment(data.appointment)
+      updateSubscription(data.subscription)
       router.back()
       return
     }
 
-    console.log('Erro ao atualizar appointment')
-    return
+    console.log('Erro ao atualizar subscription')
   }
 
   return (
     <View style={styles.container}>
-      <Text>Data e Hora:</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={txtSetDate}
-        value={date}
-        placeholder="YYYY-MM-DDTHH:MM"
-        placeholderTextColor="#DDDDDD"
-      />
-
       <Text>Status:</Text>
       <TextInput
         style={styles.input}
-        onChangeText={txtSetStatus}
+        onChangeText={setTxtStatus}
         value={txtStatus}
-        placeholder="Ex: confirmado"
+        placeholder="Ex: ativo, cancelado..."
         placeholderTextColor="#DDDDDD"
       />
 
-      <Text>Mensagem (opcional):</Text>
+      <Text>Data de Início:</Text>
       <TextInput
         style={styles.input}
-        onChangeText={txtSetMessage}
-        value={txtMessage}
-        placeholder="Mensagem"
+        onChangeText={setTxtStartDate}
+        value={txtStartDate}
+        placeholder="YYYY-MM-DD"
         placeholderTextColor="#DDDDDD"
       />
 
-      <Button onPress={handleUpdateAppointment}>Atualizar</Button>
+      <Text>Data de Fim:</Text>
+      <TextInput
+        style={styles.input}
+        onChangeText={setTxtEndDate}
+        value={txtEndDate}
+        placeholder="YYYY-MM-DD"
+        placeholderTextColor="#DDDDDD"
+      />
+
+      <Text>Stripe ID:</Text>
+      <TextInput
+        style={styles.input}
+        onChangeText={setTxtStripeId}
+        value={txtStripeId}
+        placeholder="ID do Stripe"
+        placeholderTextColor="#DDDDDD"
+      />
+
+      <Button onPress={handleUpdateSubscription}>Atualizar</Button>
     </View>
   )
 }

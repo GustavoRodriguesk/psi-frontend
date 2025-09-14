@@ -17,8 +17,11 @@ export default function RootLayout() {
       <Stack.Screen name="login" options={{title: "Entrar"}}/>
       <Stack.Screen name="signup" options={{title: "Cadastre-se"}}/>
       <Stack.Screen name="createAppointment" options={{title: "Adicionar Agendamento"}}/>
-      <Stack.Screen name="show-pass" options={{title: "Ver Senha"}}/>
       <Stack.Screen name="updateAppointment" options={{title: "Editar Agendamento"}}/>
+      <Stack.Screen name="createSubscription" options={{title: "Adicionar Mensalidade"}}/>
+      <Stack.Screen name="updateSubscription" options={{title: "Editar Mensalidade"}}/>
+      <Stack.Screen name="createMood" options={{title: "Adicionar Mood"}}/>
+      <Stack.Screen name="updateMood" options={{title: "Editar Mood"}}/>
     </Stack>
   );
 }
