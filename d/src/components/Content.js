@@ -1,58 +1,76 @@
-import { useEffect } from 'react'
-import {View, StyleSheet, Text} from 'react-native'
-import CardAppointment from './CardAppointment'
-import { useAppointmentStore } from '../stores/useAppointmentStore'
-import { fetchAuth } from '../utils/fetchAuth'
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Pressable, LayoutAnimation, Platform, UIManager } from 'react-native';
+import { Calendar } from 'react-native-calendars';
 
-export default function Content(){
+if (Platform.OS === 'android') {
+  UIManager.setLayoutAnimationEnabledExperimental?.(true);
+}
 
-  const { appointments, setAppointments } = useAppointmentStore()
+export default function CardSubscription({ id, status, startDate, endDate, createdAt }) {
+  const [expanded, setExpanded] = useState(false);
 
-  console.log('Appointments: ', appointments)
-  
-   useEffect(() => {
-        const getAppointments = async () => {
-            const response = await fetchAuth('http://localhost:5000/appointment/list')
-            if(response.ok){
-              const data = await response.json()
-              console.log(data)
-              setAppointments(data.appointments)
-              return
-            }
-            console.log('Erro ao carregar appointments')
-            return
-        }
+  const formattedStart = startDate?.split('T')[0];
+  const formattedEnd = new Date(endDate).toLocaleDateString('pt-BR');
+  const formattedCreated = new Date(createdAt).toLocaleDateString('pt-BR');
 
-        getAppointments()
-   }, [])
+  const markedDate = {
+    [formattedStart]: {
+      selected: true,
+      marked: true,
+      selectedColor: '#00adf5',
+    },
+  };
 
+  const handlePress = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setExpanded(prev => !prev);
+  };
 
-    return (
+  return (
+    <Pressable onPress={handlePress} style={styles.pressable}>
+      <View style={styles.card}>
         <View style={styles.content}>
-               
-        { appointments.length === 0 && <Text>Loading...</Text>}
-
-        {
-          appointments.map( (appointment) => 
-            <CardAppointment
-              key={appointment.id}
-              id={appointment.id} 
-              status={appointment.status}
-              message={appointment.message}
-              date={appointment.date}
-            /> 
-          )
-        }
+          <Text style={styles.status}>Status: {status}</Text>
+          {expanded && (
+            <>
+              <Calendar markedDates={markedDate} />
+              <Text style={styles.extra}>Início: {formattedStart}</Text>
+              <Text style={styles.extra}>Fim: {formattedEnd}</Text>
+              <Text style={styles.extra}>Criado em: {formattedCreated}</Text>
+              <Text style={styles.extra}>ID da assinatura: {id}</Text>
+            </>
+          )}
         </View>
-    )
+      </View>
+    </Pressable>
+  );
 }
 
 const styles = StyleSheet.create({
-    content: {
-        gap: 10,
-        //backgroundColor: "#545656",
-        padding: 15
-        //justifyContent: 'center',
-        //alignItems: 'center'
-      }
-})
+  pressable: {
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  card: {
+    padding: 10,
+    borderStyle: 'solid',
+    borderColor: '#EEEEEE',
+    borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    marginBottom: 10,
+  },
+  content: {
+    gap: 8,
+  },
+  status: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#333',
+  },
+  extra: {
+    fontSize: 14,
+    color: '#555',
+    marginTop: 4,
+  },
+});
